@@ -13,14 +13,15 @@ from .serializers import BancasSerializer
 class BancaListCreateView(generics.ListCreateAPIView):
     queryset = Bancas.objects.all()
     serializer_class = BancasSerializer
-    permission_classes = [IsAuthenticated , IsAdmin | IsGerente]
+    
 
+    
 
 class ProcesarDatosBancaAPIView(APIView):
     permission_classes = [IsAuthenticated, IsAdmin | IsGerente]
-    def post(self, request, pk):
+    def post(self, request, id):
         try:
-            banca = Bancas.objects.get(pk=pk)
+            banca = Bancas.objects.get(id=id)
             # Lógica para procesar los datos de la banca
             return Response({"mensaje": "Datos procesados correctamente."}, status=status.HTTP_200_OK)
         except Bancas.DoesNotExist:
@@ -31,6 +32,8 @@ class ToggleBancaAPIView(APIView):
     permission_classes = [IsAuthenticated, IsAdmin | IsGerente]
 
     def patch(self, request, id):
+        print("Authorization Header:", request.headers.get('Authorization'))
+
         try:
             banca = Bancas.objects.get(id=id)
             banca.activa = not banca.activa  
@@ -90,3 +93,6 @@ class BancaDeleteView(APIView):
             return Response({"detail": "Banca eliminada correctamente."}, status=status.HTTP_204_NO_CONTENT)
         except Bancas.DoesNotExist:
             return Response({"detail": "Banca no encontrada."}, status=status.HTTP_404_NOT_FOUND)
+
+
+

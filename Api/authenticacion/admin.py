@@ -5,19 +5,19 @@ from .models import CustomUser
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    list_display = ('email', 'username', 'is_staff', 'is_active')
-    list_filter = ('role','is_staff', 'is_active')
+    list_display = ('email', 'username', 'is_staff', 'is_active', 'assigned_banca', 'access_level')  # Elimina la coma al final
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Información Personal', {'fields': ('username',)}),
+        ('Información Personal', {'fields': ('username', 'first_name', 'last_name', 'profile_picture', 'phone_number', 'linkedin_profile')}), 
         ('Permisos', { 'fields': ( 'role', 'is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
-        
     )
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('email', 'username', 'password1', 'password2', 'is_staff', 'is_active'),
-        }),
-    )
+
     search_fields = ('email', 'username')
     ordering = ('email',)
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super().get_fieldsets(request, obj)
+        fieldsets += (
+            ('Información Adicional', {'fields': ('assigned_banca', 'access_level', 'biography', 'profile_picture', 'phone_number', 'linkedin_profile')}),
+        )
+        return fieldsets

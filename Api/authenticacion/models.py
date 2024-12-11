@@ -23,21 +23,43 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(username=username, email=email, password=password, **extra_fields)
 
-    
-class CustomUser(AbstractUser, PermissionsMixin):
 
+class Skill(models.Model):
+    name = models.CharField(max_length=100)
+
+
+    def __str__(self):
+        return self.name
+
+class Badge(models.Model):
+    name = models.CharField(max_length=100)
+    type = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+class CustomUser(AbstractUser, PermissionsMixin):
     ROLE_CHOICESD = [ 
         ('ADMIN', 'Administrador'),
         ('GERENTE', 'Gerente'),
         ('EMPLEADO', 'Empleado'),
     ]
 
-
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=150, unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     role = models.CharField(max_length=10, choices=ROLE_CHOICESD, default='EMPLEADO')
+   
+    skill = models.ManyToManyField(Skill , blank=True) 
+    badges = models.ManyToManyField(Badge, blank=True)
+
+    assigned_banca = models.CharField(max_length=255, blank=True, null=True)
+    access_level = models.CharField(max_length=50, blank=True, null=True)
+    biography = models.TextField(blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)  # Para la imagen de perfil
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    linkedin_profile = models.URLField(blank=True, null=True)
 
     objects = CustomUserManager()
 

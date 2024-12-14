@@ -38,6 +38,10 @@ class Badge(models.Model):
     def __str__(self):
         return self.name
 
+
+
+
+
 class CustomUser(AbstractUser, PermissionsMixin):
     ROLE_CHOICESD = [ 
         ('ADMIN', 'Administrador'),
@@ -56,10 +60,7 @@ class CustomUser(AbstractUser, PermissionsMixin):
 
     assigned_banca = models.CharField(max_length=255, blank=True, null=True)
     access_level = models.CharField(max_length=50, blank=True, null=True)
-    biography = models.TextField(blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)  # Para la imagen de perfil
-    phone_number = models.CharField(max_length=20, blank=True, null=True)
-    linkedin_profile = models.URLField(blank=True, null=True)
+    profilePicture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)  # Para la imagen de perfil
 
     objects = CustomUserManager()
 
@@ -70,3 +71,11 @@ class CustomUser(AbstractUser, PermissionsMixin):
         return f"{self.email} ({self.get_role_display()})"
     
 
+class Profile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
+    biography = models.TextField(blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    linkedin_profile = models.URLField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Profile of {self.user.username}"

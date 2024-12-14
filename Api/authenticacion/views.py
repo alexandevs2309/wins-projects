@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.hashers import make_password
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,6 +9,7 @@ from .serializers import RegisterSerializer, UserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.permissions import IsAuthenticated , AllowAny
 from .permissions import IsAdmin
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class RegisterView(APIView):
@@ -74,6 +76,8 @@ class LoginView(TokenObtainPairView):
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
+    parser_classes = (MultiPartParser , FormParser)
+
     def get(self, request):
         user = request.user
         profile_data = {
@@ -82,7 +86,7 @@ class ProfileView(APIView):
             'first_name': user.first_name,
             'last_name': user.last_name,
             'role': user.role,  # Agregar el rol
-            'profilePicture': user.profile_picture.url if user.profile_picture else None,  # Acceder directamente al campo
+            'profilePicture': user.profilePicture.url if user.profilePicture else None,  # Acceder directamente al campo
             'assignedBanca': user.assigned_banca,  # Acceder directamente al campo
             'accessLevel': user.access_level,  # Agregar el nivel de acceso
             'biography': user.profile.biography if hasattr(user, 'profile') else None,  # Agregar la biografía (si existe)
@@ -99,15 +103,32 @@ class ProfileView(APIView):
    
 
     def put(self, request):
+        print(request.path)
         user = request.user  # Obtienes el usuario autenticado
         user.first_name = request.data.get('first_name', user.first_name)
         user.last_name = request.data.get('last_name', user.last_name)
         user.email = request.data.get('email', user.email)
         
+        if 'profile_picture' in request.FILES:
+            user.profilePicture = request.FILES['profile_picture']
+            user.save
         # Si tienes un modelo de perfil asociado:
         if hasattr(user, 'profile'):
             user.profile.phone_number = request.data.get('phone_number', user.profile.phone_number)
             user.profile.save()
+
+          # Manejo de la contraseña
+        new_password = request.data.get('new_password')  # Obtener la nueva contraseña del request
+        if new_password:
+            user.password = make_password(new_password)  # Hashear la nueva contraseña
+
+        # Manejo de la autenticación de dos factores (2FA)
+        two_factor_enabled = request.data.get('two_factor')
+        if two_factor_enabled is not None:
+            # Aquí debes implementar la lógica para activar/desactivar la 2FA
+            # ...
+            pass 
         
         user.save()  # Guarda los cambios del usuario
-        return Response({'status': 'Perfil actualizado'}, status=status.HTTP_200_OK)
+        print(user)
+        return Response({'status': 'Perfil actualizado', 'profile_picture': user.profilePicture.url}, status=status.HTTP_200_OK)

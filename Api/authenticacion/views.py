@@ -80,24 +80,27 @@ class ProfileView(APIView):
 
     def get(self, request):
         user = request.user
-        profile_data = {
-            'id': user.id,
-            'email': user.email,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'role': user.role,  # Agregar el rol
-            'profilePicture': user.profilePicture.url if user.profilePicture else None,  # Acceder directamente al campo
-            'assignedBanca': user.assigned_banca,  # Acceder directamente al campo
-            'accessLevel': user.access_level,  # Agregar el nivel de acceso
-            'biography': user.profile.biography if hasattr(user, 'profile') else None,  # Agregar la biografía (si existe)
-            'skills': user.profile.skills.all() if hasattr(user, 'profile') else [],  # Obtener habilidades (si existen)
-            'badges': [{'id': badge.id, 'name': badge.name, 'type': badge.type} for badge in user.profile.badges.all()] if hasattr(user, 'profile') else [],  # Obtener badges (si existen)
-            'phone': user.profile.phone_number if hasattr(user, 'profile') else None,  # Cambiar el nombre a 'phone'
-            'linkedinProfile': user.profile.linkedin_profile if hasattr(user, 'profile') else None,  # Agregar el perfil de LinkedIn (si existe)
-            'activityLog': user.profile.activity_log.all() if hasattr(user, 'profile') else []  # Obtener el historial de actividad (si existe)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+
+        # profile_data = {
+        #     'id': user.id,
+        #     'email': user.email,
+        #     'first_name': user.first_name,
+        #     'last_name': user.last_name,
+        #     'role': user.role,  # Agregar el rol
+        #     'assignedBanca': user.assigned_banca,  # Acceder directamente al campo
+        #     'accessLevel': user.access_level,  # Agregar el nivel de acceso
+        #     'biography': user.profile.biography if hasattr(user, 'profile') else None,  # Agregar la biografía (si existe)
+        #     'skills': user.profile.skills.all() if hasattr(user, 'profile') else [],  # Obtener habilidades (si existen)
+        #     'badges': [{'id': badge.id, 'name': badge.name, 'type': badge.type} for badge in user.profile.badges.all()] if hasattr(user, 'profile') else [],  # Obtener badges (si existen)
+        #     'phone': user.profile.phone_number if hasattr(user, 'profile') else None,  # Cambiar el nombre a 'phone'
+        #     'linkedinProfile': user.profile.linkedin_profile if hasattr(user, 'profile') else None,  # Agregar el perfil de LinkedIn (si existe)
+        #     'activityLog': user.profile.activity_log.all() if hasattr(user, 'profile') else []  # Obtener el historial de actividad (si existe)
         
             
-        }
+        # }
         return Response(profile_data)
     
    
@@ -108,10 +111,7 @@ class ProfileView(APIView):
         user.first_name = request.data.get('first_name', user.first_name)
         user.last_name = request.data.get('last_name', user.last_name)
         user.email = request.data.get('email', user.email)
-        
-        if 'profile_picture' in request.FILES:
-            user.profilePicture = request.FILES['profile_picture']
-            user.save
+      
         # Si tienes un modelo de perfil asociado:
         if hasattr(user, 'profile'):
             user.profile.phone_number = request.data.get('phone_number', user.profile.phone_number)
@@ -131,4 +131,4 @@ class ProfileView(APIView):
         
         user.save()  # Guarda los cambios del usuario
         print(user)
-        return Response({'status': 'Perfil actualizado', 'profile_picture': user.profilePicture.url}, status=status.HTTP_200_OK)
+        return Response({'status': 'Perfil actualizado', }, status=status.HTTP_200_OK)

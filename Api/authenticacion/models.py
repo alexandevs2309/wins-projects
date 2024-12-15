@@ -38,10 +38,6 @@ class Badge(models.Model):
     def __str__(self):
         return self.name
 
-
-
-
-
 class CustomUser(AbstractUser, PermissionsMixin):
     ROLE_CHOICESD = [ 
         ('ADMIN', 'Administrador'),
@@ -59,9 +55,7 @@ class CustomUser(AbstractUser, PermissionsMixin):
     badges = models.ManyToManyField(Badge, blank=True)
 
     assigned_banca = models.CharField(max_length=255, blank=True, null=True)
-    access_level = models.CharField(max_length=50, blank=True, null=True)
-    profilePicture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)  # Para la imagen de perfil
-
+    access_level = models.CharField(max_length=50, blank=True, null=True)    
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
@@ -70,6 +64,16 @@ class CustomUser(AbstractUser, PermissionsMixin):
     def __str__(self):
         return f"{self.email} ({self.get_role_display()})"
     
+
+    def get_initials(self):
+        first_name = self.first_name or ""
+        last_name = self.last_name or ""
+        initials = (first_name[:1] + last_name[:1]).upper()
+
+        return initials
+
+
+
 
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')

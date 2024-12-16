@@ -10,6 +10,40 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.permissions import IsAuthenticated , AllowAny
 from .permissions import IsAdmin
 from rest_framework.parsers import MultiPartParser, FormParser
+from django_otp.plugins.otp_totp.models import TOTPDevice
+
+class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def put(self, request):
+        user = request.user
+        data = request.data
+        
+        # Manejo de la contraseña
+        new_password = data.get('new_password')
+        if new_password:
+            user.password = make_password(new_password)
+        
+        # Activar/desactivar 2FA
+        two_factor_enabled = data.get('two_factor')
+        if two_factor_enabled is not None:
+            if two_factor_enabled:
+                user.enable_two_factor()
+            else:
+                user.disable_two_factor()
+
+        # Actualiza el resto del perfil
+        if hasattr(user, 'profile'):
+            profile = user.profile
+            profile.phone = data.get('phone', profile.phone)
+            profile.address = data.get('address', profile.address)
+            profile.biography = data.get('biography', profile.biography)
+            profile.linkedin_profile = data.get('linkedin_profile', profile.linkedin_profile)
+            profile.save()
+
+        user.save()
+        return Response({'status': 'Perfil actualizado'}, status=status.HTTP_200_OK)
+
 
 
 class RegisterView(APIView):
@@ -107,6 +141,10 @@ class ProfileView(APIView):
 
     def put(self, request):
         print(request.path)
+        user = request.user  # Usuario autenticado
+        data = request.data
+
+
         user = request.user  # Obtienes el usuario autenticado
         user.first_name = request.data.get('first_name', user.first_name)
         user.last_name = request.data.get('last_name', user.last_name)
@@ -114,8 +152,13 @@ class ProfileView(APIView):
       
         # Si tienes un modelo de perfil asociado:
         if hasattr(user, 'profile'):
-            user.profile.phone_number = request.data.get('phone_number', user.profile.phone_number)
-            user.profile.save()
+            profile = user.profile
+            profile.phone = data.get('phone', profile.phone)
+            profile.address = data.get('address', profile.address)  # Nuevo campo address
+            profile.biography = data.get('biography', profile.biography)
+            profile.linkedin_profile = data.get('linkedin_profile', profile.linkedin_profile)
+            profile.save()
+
 
           # Manejo de la contraseña
         new_password = request.data.get('new_password')  # Obtener la nueva contraseña del request
@@ -132,3 +175,46 @@ class ProfileView(APIView):
         user.save()  # Guarda los cambios del usuario
         print(user)
         return Response({'status': 'Perfil actualizado', }, status=status.HTTP_200_OK)
+
+
+class TwoFactorToggleView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        enable_2fa = request.data.get('enable_2fa' , False)
+
+        if enable_2fa:
+            user.two_factor_enabled = True
+            user.generate_two_factor_code()
+
+             # Simula el envío del código por SMS o correo electrónico
+            print(f"Código de 2FA generado: {user.two_factor_code}")
+           
+
+            return Response({
+                        'message': '2FA habilitado. Código enviado.',
+                        'verification_code': user.two_factor_code  # Solo para pruebas
+                    }, status=status.HTTP_200_OK)
+
+        else:
+            user.two_factor_enabled = False
+            user.two_factor_code = None
+            user.save()
+            return Response({'message': '2FA deshabilitado.'}, status=status.HTTP_200_OK)
+
+class VerifyTwoFactorView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        code = request.data.get('code', '')
+
+        if user.two_factor_code == code:
+            user.two_factor_code = None  # Limpia el código después de verificar
+            user.save()
+            return Response({"message": "Código verificado correctamente."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Código incorrecto o expirado."}, status=status.HTTP_400_BAD_REQUEST)
+
+

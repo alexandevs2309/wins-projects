@@ -65,6 +65,7 @@ if DEBUG:
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
+       
         # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     ]
 else:
@@ -77,6 +78,7 @@ else:
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
+         'django_otp.middleware.OTPMiddleware',
     ]
 
 CORS_ALLOWED_ORIGINS = env.list('DJANGO_CORS_ALLOWED_ORIGINS', default=[])
@@ -132,6 +134,7 @@ AUTH_USER_MODEL = 'authenticacion.CustomUser'
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'guardian.backends.ObjectPermissionBackend',
+    # 'django_opt.backends.OTPBackend'
 ]
 
 SIMPLE_JWT = {

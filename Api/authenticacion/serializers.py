@@ -1,8 +1,19 @@
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, Profile
+
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ['biography', 'phone', 'linkedin_profile', 'address']  # Incluye los campos que deseas
+
 
 
 class UserSerializer(serializers.ModelSerializer):
+    initials = serializers.SerializerMethodField()
+    profile = ProfileSerializer(read_only=True)
+
     class Meta:
         model = CustomUser
         fields = '__all__'

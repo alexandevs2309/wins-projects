@@ -134,6 +134,7 @@ AUTH_USER_MODEL = 'authenticacion.CustomUser'
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'guardian.backends.ObjectPermissionBackend',
+    
     # 'django_opt.backends.OTPBackend'
 ]
 

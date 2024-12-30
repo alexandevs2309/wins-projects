@@ -1,5 +1,6 @@
 from django.db import models
 from decimal import Decimal
+from django.utils import timezone
 
 class Bancas(models.Model):
 
@@ -50,3 +51,19 @@ class Bancas(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+
+
+class BancaConfiguracion(models.Model):
+    banca = models.OneToOneField(Bancas, on_delete=models.CASCADE)
+    comisiones = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    descontar = models.BooleanField(default=False)
+    descontar_de = models.CharField(max_length=10, choices=[('premios', 'Premios'), ('ganancias', 'Ganancias')], default='premios')
+    imprimir_ticket = models.BooleanField(default=True)
+    imprimir_desglose = models.BooleanField(default=True)
+    imprimir_codigo_qr = models.BooleanField(default=True)
+    imprimir_nombre_banca = models.BooleanField(default=True)
+    imprimir_fecha = models.BooleanField(default=True)
+    imprimir_hora = models.BooleanField(default=True)
+    imprimir_ubicacion = models.BooleanField(default=True)
+    imprimir_telefono = models.BooleanField(default=True)

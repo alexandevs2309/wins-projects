@@ -39,6 +39,7 @@ THIRD_PARTY_APPS = [
     'guardian',
     'djmoney',
     'phonenumber_field',
+    'channels',
     
 ]
 
@@ -139,6 +140,7 @@ AUTHENTICATION_BACKENDS = [
     # 'django_opt.backends.OTPBackend'
 ]
 
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -147,7 +149,19 @@ SIMPLE_JWT = {
  
 }
 
+# Configuración de Redis para Channels
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],  # Cambia si usas un Redis remoto
+        },
+    },
+}
+
 WSGI_APPLICATION = 'core.wsgi.application'
+
+ASGI_APPLICATION = 'core.asgi.application'
 
 DATABASES = {
     'default': env.db('DJANGO_DATABASE_URL', default='sqlite:///db.sqlite3'),
@@ -185,3 +199,15 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField' 
 APPEND_SLASH = True
+
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
+    }
+}

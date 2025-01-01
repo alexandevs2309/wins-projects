@@ -1,19 +1,19 @@
 [
     {
         "id": 1,
-        "name": "La Primera Día"
+        "name": "Lotería Nacional"
     },
     {
         "id": 2,
-        "name": "Anguila Mañana"
+        "name": "Gana Más"
     },
     {
         "id": 3,
-        "name": "La Suerte 12:30"
+        "name": "Pega 3 Más"
     },
     {
         "id": 4,
-        "name": "Anguila Medio Día"
+        "name": "Quiniela Leidsa"
     },
     {
         "id": 5,
@@ -21,7 +21,7 @@
     },
     {
         "id": 6,
-        "name": "Florida Día"
+        "name": "Quiniela Loteka"
     },
     {
         "id": 7,
@@ -37,12 +37,13 @@
     },
     {
         "id": 10,
-        "name": "La Suerte 18:00"
+        "name": "La Suerte 12:30"
     },
     {
         "id": 11,
         "name": "Anguila Tarde"
     },
+   
     {
         "id": 12,
         "name": "Quiniela Loteka"
@@ -61,7 +62,7 @@
     },
     {
         "id": 16,
-        "name": "Primera Noche"
+        "name": "La Primera Noche"
     },   
     {
         "id": 17,
@@ -69,6 +70,91 @@
     },
     {
         "id": 18,
+        "name": "Florida Día"
+    },
+    {
+        "id": 19,
         "name": "New York Noche"
+    },
+    {
+        "id": 20,
+        "name": "La Suerte 18:00"
+    },
+    {
+        "id":21,
+        "name":"Anguila Mañana"
+    },
+    {
+        "id":22,
+        "name":"La Primera Tarde"
+    },
+    {
+        "id":23,
+        "name":"Real Tarde"
+    },
+    {
+        "id":24,
+        "name":"Real Noche"
+    },
+    {
+        "id":25,
+        "name":"La Primera Día"
+    },
+    {
+        "id":26,
+        "name":"El Quemaito Mayor"
+    },
+    {
+        "id":27,
+        "name":"King Lottery 12:30"
+    },
+    {
+        "id":28,
+        "name":"King Lottery 07:30"
+    },
+    {
+        "id":29,
+        "name":"Anguila Medio Dia"
+    },
+    {
+        "id":30,
+        "name":"Juega + Pega +"
+    },
+    {
+        "id":31,
+        "name":"Loto Pool"
+    },
+    {
+        "id":32,
+        "name":"Super Kino TV"
+    },
+    {
+        "id":33,
+        "name":"Loto - Súper Loto Más"
+    },
+    {
+        "id":34,
+        "name":"Loto - Pool Real"
+    },
+    {
+        "id":35,
+        "name":"Mega Chance"
+    },
+    {
+        "id":36,
+        "name":"Mega Millions"
+    },
+    {
+        "id":37,
+        "name":"Power Ball"
+    },
+    {
+        "id":38,
+        "name":"Cash 4 Life"
+    },
+    {
+        "id":39,
+        "name":"Loto 5"
     }
+
 ]
